@@ -46,7 +46,7 @@ public class BirdWorld extends World
         if(onStart)
         spawner.spawnBird(status,false,100,100);
         else
-        spawner.spawnBird(status, false, getWidth()-100, getHeight()/3);
+        spawner.spawnBird(status, false, getWidth()-100, 2*getHeight()/3);
         createEnergyBar();
         createTiles();
         createWall();

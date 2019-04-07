@@ -36,7 +36,7 @@ public class EnergyWorld extends World
     {
         this();
         this.status = status;
-        spawner.spawnBird(this.status,true,3*getWidth()/4,getHeight()/3);
+        spawner.spawnBird(this.status,true,getWidth()/2,getHeight()/5);
         createEnergyBar();
         for(int i=0;i<100-status.getEnergy();i++)
         updateEnergyBar();
