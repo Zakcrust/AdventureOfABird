@@ -43,7 +43,7 @@ public class Snake extends Actor
     
     private void SnakeBehaviour()
     {
-        if(isAtEdge())
+        if(isTouching(Wall.class))
         {
             if(isFacingRight)
                 isFacingRight=false;

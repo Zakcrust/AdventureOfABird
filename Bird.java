@@ -30,6 +30,7 @@ public class Bird extends Actor
     public boolean onDefeat=false;
     private boolean lastLife=true;
     private boolean isSpaceDown=false;
+    private boolean disableMovement;
     private Status status;
     Spawner spawner;
     World world;
@@ -74,7 +75,8 @@ public class Bird extends Actor
         if(getWorld()==null) return;
         animTimer();
         animate();
-        movement();
+        if(!disableMovement)
+            movement();
         surfaceCollider();
         onFruitsTouch();
         onWallTouch();
@@ -176,16 +178,40 @@ public class Bird extends Actor
             }
             if(isTouching(Wall.class))
             {
-                status.decreaseLives(1);
-                if(status.getLives()<0)
+                if(getWorld() instanceof BirdWorld)
                 {
-                    status.setLives(0);
+                    status.decreaseLives(1);
+                    if(status.getLives()<0)
+                    {
+                        status.setLives(0);
+                    }
+                    shownHealth = (float)status.getLives()/2;
+                    getWorld().showText(": "+shownHealth, 80, 35);
+                    Greenfoot.playSound("oof.mp3");
+                    getWorld().removeObject(this);
                 }
-                shownHealth = (float)status.getLives()/2;
-                getWorld().showText(": "+shownHealth, 80, 35);
-                getWorld().removeObject(this);
-
+                else
+                {
+                    Actor wall = new Wall();
+                    long delayTime = System.currentTimeMillis();
+                    disableMovement=true;
+                    getImage().mirrorHorizontally();
+                    if(getX()>500)
+                    {
+                        move(-25);
+                        isFacingRight=false;
+                    }
+                    else
+                    {
+                        move(25);
+                        isFacingRight=true;
+                    }
+                    while(delayTime<=3000);
+                    disableMovement=false;
+                    delayTime = 0;
+                }
             }
+
         }
     }
 
@@ -208,6 +234,7 @@ public class Bird extends Actor
                 }
                 shownHealth = (float)status.getLives()/2;
                 getWorld().showText(": "+shownHealth, 80, 35);
+                Greenfoot.playSound("oof.mp3");
                 getWorld().removeObject(this);
             }
         }
@@ -232,6 +259,7 @@ public class Bird extends Actor
                 }
                 shownHealth = (float)status.getLives()/2;
                 getWorld().showText(": "+shownHealth, 80, 35);
+                Greenfoot.playSound("oof.mp3");
                 getWorld().removeObject(this);
             }
         }
@@ -248,6 +276,7 @@ public class Bird extends Actor
             else
                 getWorldOfType(BirdWorld.class).rightWorm--;
             status.increaseWormTaken();
+            Greenfoot.playSound("getworm.mp3");
             getWorld().showText("Worms Taken : "+status.getWormTaken(),getWorld().getWidth()/2,25);
         }
     }
@@ -271,6 +300,7 @@ public class Bird extends Actor
                     energybar.remove(energybar.size()-1);
                 }
             }
+            Greenfoot.playSound("getworm.mp3");
             getWorld().removeObject(apple);
         }
         if(banana!=null)
@@ -284,6 +314,7 @@ public class Bird extends Actor
                     energybar.remove(energybar.size()-1);
                 }
             }
+            Greenfoot.playSound("getworm.mp3");
             getWorld().removeObject(banana);
         }
         if(papaya!=null)
@@ -297,6 +328,7 @@ public class Bird extends Actor
                     energybar.remove(energybar.size()-1);
                 }
             }
+            Greenfoot.playSound("getworm.mp3");
             getWorld().removeObject(papaya);
         }
     }
@@ -307,7 +339,11 @@ public class Bird extends Actor
         {
             if(getWorld().getObjects(Win.class).size()==0)
                 getWorld().addObject(new Win("Kau Menang!"),getWorldXMid(),getWorldYMid());
+            ((BirdWorld)getWorld()).music.stop();
+            Greenfoot.playSound("win.mp3");
+            Greenfoot.stop();
             getWorld().removeObject(this);
+
             return;
         }
     }
@@ -320,6 +356,8 @@ public class Bird extends Actor
             if(getWorld().getObjects(GameOver.class).size()==0)
                 getWorld().addObject(new GameOver("Kau Kalah!"),getWorldXMid(),getWorldYMid());
             getWorld().removeObject(this);
+            ((BirdWorld)getWorld()).music.stop();
+            Greenfoot.playSound("lose.mp3");
             Greenfoot.stop();
             return;
         }
@@ -382,7 +420,12 @@ public class Bird extends Actor
     {
 
         if(status.getLives()==0)
-            getWorld().addObject(new GameOver("Kau Kalah!"),getWorld().getWidth()/2,getWorld().getHeight()/2);
-
+        {
+            if(getWorld().getObjects(GameOver.class).size()==0)
+                getWorld().addObject(new GameOver("Kau Kalah!"),getWorld().getWidth()/2,getWorld().getHeight()/2);
+            ((BirdWorld)getWorld()).music.stop();
+            Greenfoot.playSound("lose.mp3");
+            Greenfoot.stop();
+        }
     }
 }

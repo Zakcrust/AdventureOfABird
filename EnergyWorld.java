@@ -29,7 +29,7 @@ public class EnergyWorld extends World
         spawner = new Spawner((World)this);
         music = new GreenfootSound("Phyrnna - A Stroll Through Nostalgia.mp3");
         music.play();
-        setPaintOrder(GameOver.class,Snake.class,Fruits.class,Block.class,Bird.class,EnergyBar.class,Branch.class,Tree.class);
+        setPaintOrder(GameOver.class,Snake.class,Fruits.class,Wall.class,Block.class,Bird.class,EnergyBar.class,Branch.class,Tree.class);
     }
 
     public EnergyWorld(Status status)
@@ -111,8 +111,12 @@ public class EnergyWorld extends World
     {
         Tree tree = new Tree();
         addObject(tree,getWidth()/2,getHeight()/2+10);
-        addObject(new Snake(),getWidth()/2,getHeight()-20);
+        addObject(new Snake(),getWidth()/2,getHeight()-25);
         addObject(new Branch(),502,50);
+        Wall wall = new Wall();
+        addObject(wall,16,440);
+        Wall wall2 = new Wall();
+        addObject(wall2,583,440);
     }
     
     public void act()
